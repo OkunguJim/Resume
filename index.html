@@ -2,27 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Resume Builder</title>
+  <title>Article Writing App</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
+      margin: 0; padding: 20px;
+      background: #f9f9f9;
     }
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
-      background: #fff;
+      background: white;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+    h2 {
+      margin-top: 0;
+    }
     input, textarea {
       width: 100%;
       padding: 10px;
-      margin-top: 8px;
-      margin-bottom: 16px;
+      margin: 10px 0 20px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
@@ -31,182 +32,81 @@
       background: #3498db;
       color: white;
       border: none;
-      border-radius: 5px;
-      margin-right: 10px;
+      border-radius: 4px;
       cursor: pointer;
+      margin-right: 10px;
     }
-    #resume {
-      margin-top: 40px;
+    #preview {
+      background: #f4f4f4;
       padding: 20px;
-      border-top: 2px solid #ddd;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section h3 {
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 5px;
-    }
-    .experience-entry {
-      margin-bottom: 15px;
-      padding: 10px;
-      border: 1px dashed #ccc;
-      border-radius: 5px;
+      margin-top: 30px;
+      border-left: 5px solid #3498db;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h2>Resume Builder</h2>
+    <h2>Article Writing App</h2>
 
-    <form id="resumeForm">
-      <label>Full Name:</label>
-      <input type="text" id="name" required>
+    <label>Title:</label>
+    <input type="text" id="title" placeholder="Enter article title">
 
-      <label>Email:</label>
-      <input type="email" id="email" required>
+    <label>Content:</label>
+    <textarea id="content" rows="10" placeholder="Start writing your article here..."></textarea>
 
-      <label>Phone:</label>
-      <input type="text" id="phone" required>
+    <button onclick="previewArticle()">Preview</button>
+    <button onclick="saveArticle()">Save</button>
+    <button onclick="loadArticle()">Load</button>
+    <button onclick="clearArticle()">Clear</button>
 
-      <label>Summary:</label>
-      <textarea id="summary" rows="4" required></textarea>
-
-      <label>Skills (comma-separated):</label>
-      <input type="text" id="skills" required>
-
-      <div id="experienceContainer">
-        <label>Experience:</label>
-        <div class="experience-entry">
-          <textarea class="experience" rows="3" required></textarea>
-        </div>
-      </div>
-      <button type="button" onclick="addExperience()">Add Experience</button>
-
-      <label>Education:</label>
-      <textarea id="education" rows="4" required></textarea>
-
-      <br>
-      <button type="button" onclick="generateResume()">Generate Resume</button>
-      <button type="button" onclick="saveData()">Save</button>
-      <button type="button" onclick="loadData()">Load</button>
-      <button type="button" onclick="printResume()">Print to PDF</button>
-    </form>
-
-    <div id="resume" style="display:none;">
-      <h2 id="resName"></h2>
-      <p><strong>Email:</strong> <span id="resEmail"></span> |
-         <strong>Phone:</strong> <span id="resPhone"></span></p>
-
-      <div class="section">
-        <h3>Summary</h3>
-        <p id="resSummary"></p>
-      </div>
-
-      <div class="section">
-        <h3>Skills</h3>
-        <ul id="resSkills"></ul>
-      </div>
-
-      <div class="section">
-        <h3>Experience</h3>
-        <ul id="resExperience"></ul>
-      </div>
-
-      <div class="section">
-        <h3>Education</h3>
-        <p id="resEducation"></p>
-      </div>
+    <div id="preview" style="display:none;">
+      <h3 id="previewTitle"></h3>
+      <p id="previewContent"></p>
     </div>
   </div>
 
   <script>
-    function addExperience() {
-      const container = document.getElementById("experienceContainer");
-      const newEntry = document.createElement("div");
-      newEntry.className = "experience-entry";
-      newEntry.innerHTML = '<textarea class="experience" rows="3" required></textarea>';
-      container.appendChild(newEntry);
+    function previewArticle() {
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+
+      document.getElementById("previewTitle").innerText = title;
+      document.getElementById("previewContent").innerText = content;
+      document.getElementById("preview").style.display = "block";
     }
 
-    function generateResume() {
-      document.getElementById("resName").textContent = document.getElementById("name").value;
-      document.getElementById("resEmail").textContent = document.getElementById("email").value;
-      document.getElementById("resPhone").textContent = document.getElementById("phone").value;
-      document.getElementById("resSummary").textContent = document.getElementById("summary").value;
-      document.getElementById("resEducation").textContent = document.getElementById("education").value;
+    function saveArticle() {
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
 
-      // Skills
-      const skillsArray = document.getElementById("skills").value.split(",");
-      const skillsList = document.getElementById("resSkills");
-      skillsList.innerHTML = "";
-      skillsArray.forEach(skill => {
-        const li = document.createElement("li");
-        li.textContent = skill.trim();
-        skillsList.appendChild(li);
-      });
-
-      // Experience
-      const experienceList = document.getElementById("resExperience");
-      experienceList.innerHTML = "";
-      const experiences = document.querySelectorAll(".experience");
-      experiences.forEach(exp => {
-        const li = document.createElement("li");
-        li.textContent = exp.value;
-        experienceList.appendChild(li);
-      });
-
-      document.getElementById("resume").style.display = "block";
-    }
-
-    function saveData() {
-      const data = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        summary: document.getElementById("summary").value,
-        skills: document.getElementById("skills").value,
-        education: document.getElementById("education").value,
-        experiences: Array.from(document.querySelectorAll(".experience")).map(e => e.value)
-      };
-      localStorage.setItem("resumeData", JSON.stringify(data));
-      alert("Data saved!");
-    }
-
-    function loadData() {
-      const data = JSON.parse(localStorage.getItem("resumeData"));
-      if (!data) {
-        alert("No saved data found.");
-        return;
+      if (title && content) {
+        localStorage.setItem("articleTitle", title);
+        localStorage.setItem("articleContent", content);
+        alert("Article saved!");
+      } else {
+        alert("Please fill in both the title and content.");
       }
-
-      document.getElementById("name").value = data.name;
-      document.getElementById("email").value = data.email;
-      document.getElementById("phone").value = data.phone;
-      document.getElementById("summary").value = data.summary;
-      document.getElementById("skills").value = data.skills;
-      document.getElementById("education").value = data.education;
-
-      const container = document.getElementById("experienceContainer");
-      container.innerHTML = `<label>Experience:</label>`;
-      data.experiences.forEach(val => {
-        const entry = document.createElement("div");
-        entry.className = "experience-entry";
-        entry.innerHTML = `<textarea class="experience" rows="3" required>${val}</textarea>`;
-        container.appendChild(entry);
-      });
-
-      alert("Data loaded!");
     }
 
-    function printResume() {
-      generateResume(); // Make sure resume is generated
-      const originalContents = document.body.innerHTML;
-      const resumeContent = document.getElementById("resume").innerHTML;
-      document.body.innerHTML = `<div class="container">${resumeContent}</div>`;
-      window.print();
-      location.reload(); // Reload the page after printing
+    function loadArticle() {
+      const title = localStorage.getItem("articleTitle");
+      const content = localStorage.getItem("articleContent");
+
+      if (title && content) {
+        document.getElementById("title").value = title;
+        document.getElementById("content").value = content;
+        previewArticle();
+        alert("Article loaded.");
+      } else {
+        alert("No saved article found.");
+      }
+    }
+
+    function clearArticle() {
+      document.getElementById("title").value = "";
+      document.getElementById("content").value = "";
+      document.getElementById("preview").style.display = "none";
     }
   </script>
 
