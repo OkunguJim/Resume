@@ -2,78 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Resume</title>
+  <title>Resume Builder</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 40px;
-      background-color: #f9f9f9;
-      color: #333;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
     }
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
       background: #fff;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h1, h2 {
-      color: #2c3e50;
+    h2 {
+      color: #333;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #resume {
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 2px solid #ddd;
     }
     .section {
       margin-bottom: 20px;
     }
-    .section-title {
-      border-bottom: 2px solid #eee;
+    .section h3 {
+      border-bottom: 1px solid #ccc;
       padding-bottom: 5px;
-      margin-bottom: 10px;
-    }
-    ul {
-      padding-left: 20px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>John Doe</h1>
-    <p><strong>Email:</strong> johndoe@example.com | <strong>Phone:</strong> +123-456-7890</p>
-    <p><strong>Location:</strong> New York, USA</p>
+    <h2>Resume Builder</h2>
 
-    <div class="section">
-      <h2 class="section-title">Summary</h2>
-      <p>Motivated and detail-oriented professional with 2+ years of experience in front-end development and UI/UX design. Passionate about building responsive websites and improving user experience.</p>
-    </div>
+    <form id="resumeForm">
+      <label>Full Name:</label>
+      <input type="text" id="name" required>
 
-    <div class="section">
-      <h2 class="section-title">Skills</h2>
-      <ul>
-        <li>HTML, CSS, JavaScript</li>
-        <li>Responsive Design</li>
-        <li>Git & GitHub</li>
-        <li>Adobe XD, Figma</li>
-      </ul>
-    </div>
+      <label>Email:</label>
+      <input type="email" id="email" required>
 
-    <div class="section">
-      <h2 class="section-title">Experience</h2>
-      <h3>Front-End Developer — ABC Tech</h3>
-      <p><em>Jan 2022 – Present</em></p>
-      <ul>
-        <li>Developed responsive websites using HTML, CSS, and JavaScript.</li>
-        <li>Collaborated with designers and back-end developers.</li>
-        <li>Improved page load time by 30% through code optimization.</li>
-      </ul>
-    </div>
+      <label>Phone:</label>
+      <input type="text" id="phone" required>
 
-    <div class="section">
-      <h2 class="section-title">Education</h2>
-      <h3>Bachelor of Science in Computer Science</h3>
-      <p><em>XYZ University, 2018 – 2022</em></p>
+      <label>Summary:</label>
+      <textarea id="summary" rows="4" required></textarea>
+
+      <label>Skills (comma-separated):</label>
+      <input type="text" id="skills" required>
+
+      <label>Experience:</label>
+      <textarea id="experience" rows="4" required></textarea>
+
+      <label>Education:</label>
+      <textarea id="education" rows="4" required></textarea>
+
+      <button type="button" onclick="generateResume()">Generate Resume</button>
+    </form>
+
+    <div id="resume" style="display:none;">
+      <h2 id="resName"></h2>
+      <p><strong>Email:</strong> <span id="resEmail"></span> | <strong>Phone:</strong> <span id="resPhone"></span></p>
+
+      <div class="section">
+        <h3>Summary</h3>
+        <p id="resSummary"></p>
+      </div>
+
+      <div class="section">
+        <h3>Skills</h3>
+        <ul id="resSkills"></ul>
+      </div>
+
+      <div class="section">
+        <h3>Experience</h3>
+        <p id="resExperience"></p>
+      </div>
+
+      <div class="section">
+        <h3>Education</h3>
+        <p id="resEducation"></p>
+      </div>
     </div>
   </div>
+
+  <script>
+    function generateResume() {
+      document.getElementById("resName").textContent = document.getElementById("name").value;
+      document.getElementById("resEmail").textContent = document.getElementById("email").value;
+      document.getElementById("resPhone").textContent = document.getElementById("phone").value;
+      document.getElementById("resSummary").textContent = document.getElementById("summary").value;
+      document.getElementById("resExperience").textContent = document.getElementById("experience").value;
+      document.getElementById("resEducation").textContent = document.getElementById("education").value;
+
+      // Split skills into list items
+      const skillsArray = document.getElementById("skills").value.split(",");
+      const skillsList = document.getElementById("resSkills");
+      skillsList.innerHTML = "";
+      skillsArray.forEach(skill => {
+        const li = document.createElement("li");
+        li.textContent = skill.trim();
+        skillsList.appendChild(li);
+      });
+
+      document.getElementById("resume").style.display = "block";
+    }
+  </script>
 
 </body>
 </html>
