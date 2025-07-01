@@ -18,9 +18,6 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      color: #333;
-    }
     input, textarea {
       width: 100%;
       padding: 10px;
@@ -35,6 +32,7 @@
       color: white;
       border: none;
       border-radius: 5px;
+      margin-right: 10px;
       cursor: pointer;
     }
     #resume {
@@ -48,6 +46,12 @@
     .section h3 {
       border-bottom: 1px solid #ccc;
       padding-bottom: 5px;
+    }
+    .experience-entry {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px dashed #ccc;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -72,18 +76,28 @@
       <label>Skills (comma-separated):</label>
       <input type="text" id="skills" required>
 
-      <label>Experience:</label>
-      <textarea id="experience" rows="4" required></textarea>
+      <div id="experienceContainer">
+        <label>Experience:</label>
+        <div class="experience-entry">
+          <textarea class="experience" rows="3" required></textarea>
+        </div>
+      </div>
+      <button type="button" onclick="addExperience()">Add Experience</button>
 
       <label>Education:</label>
       <textarea id="education" rows="4" required></textarea>
 
+      <br>
       <button type="button" onclick="generateResume()">Generate Resume</button>
+      <button type="button" onclick="saveData()">Save</button>
+      <button type="button" onclick="loadData()">Load</button>
+      <button type="button" onclick="printResume()">Print to PDF</button>
     </form>
 
     <div id="resume" style="display:none;">
       <h2 id="resName"></h2>
-      <p><strong>Email:</strong> <span id="resEmail"></span> | <strong>Phone:</strong> <span id="resPhone"></span></p>
+      <p><strong>Email:</strong> <span id="resEmail"></span> |
+         <strong>Phone:</strong> <span id="resPhone"></span></p>
 
       <div class="section">
         <h3>Summary</h3>
@@ -97,7 +111,7 @@
 
       <div class="section">
         <h3>Experience</h3>
-        <p id="resExperience"></p>
+        <ul id="resExperience"></ul>
       </div>
 
       <div class="section">
@@ -108,15 +122,22 @@
   </div>
 
   <script>
+    function addExperience() {
+      const container = document.getElementById("experienceContainer");
+      const newEntry = document.createElement("div");
+      newEntry.className = "experience-entry";
+      newEntry.innerHTML = '<textarea class="experience" rows="3" required></textarea>';
+      container.appendChild(newEntry);
+    }
+
     function generateResume() {
       document.getElementById("resName").textContent = document.getElementById("name").value;
       document.getElementById("resEmail").textContent = document.getElementById("email").value;
       document.getElementById("resPhone").textContent = document.getElementById("phone").value;
       document.getElementById("resSummary").textContent = document.getElementById("summary").value;
-      document.getElementById("resExperience").textContent = document.getElementById("experience").value;
       document.getElementById("resEducation").textContent = document.getElementById("education").value;
 
-      // Split skills into list items
+      // Skills
       const skillsArray = document.getElementById("skills").value.split(",");
       const skillsList = document.getElementById("resSkills");
       skillsList.innerHTML = "";
@@ -126,7 +147,66 @@
         skillsList.appendChild(li);
       });
 
+      // Experience
+      const experienceList = document.getElementById("resExperience");
+      experienceList.innerHTML = "";
+      const experiences = document.querySelectorAll(".experience");
+      experiences.forEach(exp => {
+        const li = document.createElement("li");
+        li.textContent = exp.value;
+        experienceList.appendChild(li);
+      });
+
       document.getElementById("resume").style.display = "block";
+    }
+
+    function saveData() {
+      const data = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        summary: document.getElementById("summary").value,
+        skills: document.getElementById("skills").value,
+        education: document.getElementById("education").value,
+        experiences: Array.from(document.querySelectorAll(".experience")).map(e => e.value)
+      };
+      localStorage.setItem("resumeData", JSON.stringify(data));
+      alert("Data saved!");
+    }
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("resumeData"));
+      if (!data) {
+        alert("No saved data found.");
+        return;
+      }
+
+      document.getElementById("name").value = data.name;
+      document.getElementById("email").value = data.email;
+      document.getElementById("phone").value = data.phone;
+      document.getElementById("summary").value = data.summary;
+      document.getElementById("skills").value = data.skills;
+      document.getElementById("education").value = data.education;
+
+      const container = document.getElementById("experienceContainer");
+      container.innerHTML = `<label>Experience:</label>`;
+      data.experiences.forEach(val => {
+        const entry = document.createElement("div");
+        entry.className = "experience-entry";
+        entry.innerHTML = `<textarea class="experience" rows="3" required>${val}</textarea>`;
+        container.appendChild(entry);
+      });
+
+      alert("Data loaded!");
+    }
+
+    function printResume() {
+      generateResume(); // Make sure resume is generated
+      const originalContents = document.body.innerHTML;
+      const resumeContent = document.getElementById("resume").innerHTML;
+      document.body.innerHTML = `<div class="container">${resumeContent}</div>`;
+      window.print();
+      location.reload(); // Reload the page after printing
     }
   </script>
 
